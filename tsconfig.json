@@ -6,6 +6,7 @@
         "module": "ES2022",
         "moduleResolution": "node",
         "allowUnreachableCode": false,
+        "noImplicitAny": true
     },
     "include": ["app/**/*"]
 }
