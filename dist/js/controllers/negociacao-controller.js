@@ -1,3 +1,6 @@
+import { CriticidadeMensagem } from "../enums/criticidade-mensagem.js";
+import { DiasDaSemana } from "../enums/dias-da-semana.js";
+import { Mensagem } from "../models/mensagem.js";
 import { Negociacao } from "../models/negociacao.js";
 import { Negociacoes } from "../models/negociacoes.js";
 import { MensagemView } from "../views/mensagem-view.js";
@@ -7,7 +10,7 @@ export class NegociacaoController {
     inputQuantidade;
     inputValor;
     negociacoes = new Negociacoes();
-    negociacoesView = new NegociacoesView('#negociacoesView');
+    negociacoesView = new NegociacoesView('#negociacoesView', true);
     mensagemView = new MensagemView('#mensagemView');
     constructor() {
         this.inputData = document.querySelector('#data');
@@ -16,13 +19,19 @@ export class NegociacaoController {
         this.negociacoesView.update(this.negociacoes);
     }
     adiciona() {
-        const negociacao = this.criaNegociacao();
+        const negociacao = Negociacao.criaDe(this.inputData.value, this.inputQuantidade.value, this.inputValor.value);
+        if (!this.ehDiaUtil(negociacao.data)) {
+            this.mensagemView.update(new Mensagem('Apenas negociações em dias úteis são aceitas', CriticidadeMensagem.ERROR));
+            return;
+        }
         this.negociacoes.adiciona(negociacao);
-        this.negociacoesView.update(this.negociacoes);
-        this.mensagemView.update('Negociação adicionada com sucesso.');
-        console.log(this.negociacoes.lista());
+        this.atualizaView();
+        this.mensagemView.update(new Mensagem('Negociação adicionada com sucesso.', CriticidadeMensagem.SUCCESS));
     }
-    criaNegociacao() {
-        return new Negociacao(new Date(this.inputData.value.replace(/-/g, ',')), Number(this.inputQuantidade.value), Number(this.inputValor.value));
+    ehDiaUtil(data) {
+        return data.getDay() > DiasDaSemana.DOMINGO && data.getDay() < DiasDaSemana.SABADO;
+    }
+    atualizaView() {
+        this.negociacoesView.update(this.negociacoes);
     }
 }

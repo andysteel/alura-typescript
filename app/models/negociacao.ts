@@ -13,4 +13,12 @@ export class Negociacao {
         const data = new Date(this._data.getTime());
         return data;
     }
+
+    public static criaDe(dataString: string, qtdString: string, valorString: string) {
+        return  new Negociacao(
+            new Date(dataString.replace(/-/g,',')),
+            Number(qtdString),
+            Number(valorString)
+        )
+    }
 }
