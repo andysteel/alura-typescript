@@ -14,4 +14,17 @@ export class Negociacao {
     static criaDe(dataString, qtdString, valorString) {
         return new Negociacao(new Date(dataString.replace(/-/g, ',')), Number(qtdString), Number(valorString));
     }
+    paraTexto() {
+        return `
+            Data: ${this.data},
+            Quantidade: ${this.quantidade},
+            Valor: ${this.valor}
+        `;
+    }
+    ehIgual(negociacao) {
+        return this.data.getDate() === negociacao.data.getDate() &&
+            this.data.getMonth() === negociacao.data.getMonth() &&
+            this.data.getFullYear() === negociacao.data.getFullYear();
+    }
 }
+//# sourceMappingURL=negociacao.js.map

@@ -11,6 +11,8 @@ import { DiasDaSemana } from "../enums/dias-da-semana.js";
 import { Mensagem } from "../models/mensagem.js";
 import { Negociacao } from "../models/negociacao.js";
 import { Negociacoes } from "../models/negociacoes.js";
+import { NegociacoesService } from "../services/negociacoes-service.js";
+import { imprimir } from "../utils/imprimir.js";
 import { MensagemView } from "../views/mensagem-view.js";
 import { NegociacoesView } from "../views/negociacoes-view.js";
 export class NegociacaoController {
@@ -18,6 +20,7 @@ export class NegociacaoController {
         this.negociacoes = new Negociacoes();
         this.negociacoesView = new NegociacoesView('#negociacoesView');
         this.mensagemView = new MensagemView('#mensagemView');
+        this.negociacoesService = new NegociacoesService();
         this.negociacoesView.update(this.negociacoes);
     }
     adiciona() {
@@ -27,8 +30,28 @@ export class NegociacaoController {
             return;
         }
         this.negociacoes.adiciona(negociacao);
+        imprimir(negociacao, this.negociacoes);
         this.atualizaView();
         this.mensagemView.update(new Mensagem('Negociação adicionada com sucesso.', CriticidadeMensagem.SUCCESS));
+    }
+    importarDados() {
+        this.negociacoesService
+            .obterNegociacoesDoDia()
+            .then(negociacoesDeHoje => {
+            return negociacoesDeHoje.filter(negociacaoDeHoje => {
+                return !this
+                    .negociacoes
+                    .lista()
+                    .some(negociacao => negociacao.ehIgual(negociacaoDeHoje));
+            });
+        })
+            .then(negociacoesDeHoje => {
+            for (let negociacao of negociacoesDeHoje) {
+                this.negociacoes.adiciona(negociacao);
+            }
+            this.atualizaView();
+        })
+            .catch(error => { throw Error(error); });
     }
     ehDiaUtil(data) {
         return data.getDay() > DiasDaSemana.DOMINGO && data.getDay() < DiasDaSemana.SABADO;
@@ -49,3 +72,4 @@ __decorate([
 __decorate([
     LogarTempoDeExecucao(true)
 ], NegociacaoController.prototype, "adiciona", null);
+//# sourceMappingURL=negociacao-controller.js.map

@@ -4,3 +4,4 @@ export var CriticidadeMensagem;
     CriticidadeMensagem["ERROR"] = "danger";
     CriticidadeMensagem["INFO"] = "info";
 })(CriticidadeMensagem || (CriticidadeMensagem = {}));
+//# sourceMappingURL=criticidade-mensagem.js.map
